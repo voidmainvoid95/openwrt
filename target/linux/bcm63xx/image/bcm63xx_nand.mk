@@ -39,7 +39,7 @@ endef
 define Device/sercomm-nand
   $(Device/bcm63xx-nand)
   IMAGES := factory.img sysupgrade.bin
-  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | cfe-sercomm-part | gzip | cfe-sercomm-load | cfe-sercomm-crypto
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | cfe-sercomm-part | gzip | cfe-sercomm-load | cfe-sercomm-crypto 
   SERCOM_PID :=
   SERCOMM_VERSION :=
 endef
@@ -202,3 +202,35 @@ define Device/sercomm_h500-s-vfes
   SERCOMM_VERSION := 1001
 endef
 TARGET_DEVICES += sercomm_h500-s-vfes
+
+define Device/sercomm_vd625
+  $(Device/sercomm-nand)
+  IMAGES := factory.img sysupgrade.bin
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | cfe-sercomm-part | gzip | cfe-sercomm-load
+  DEVICE_VENDOR := Sercomm
+  DEVICE_MODEL := VD625
+  DEVICE_LOADADDR := $(KERNEL_LOADADDR)
+  KERNEL := kernel-bin | append-dtb | lzma | cfe-jffs2-kernel
+  CHIP_ID := 63268
+  SOC := bcm63168
+  CFE_RAM_FILE := sercomm,vd625/cferam.000
+  CFE_RAM_JFFS2_NAME := cferam.000  
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  SUBPAGESIZE := 512
+  VID_HDR_OFFSET := 2048
+  DEVICE_PACKAGES += $(USB2_PACKAGES)
+  CFE_WFI_FLASH_TYPE := 4
+  CFE_WFI_VERSION := 0x5732
+  SERCOMM_PID := \
+    30 30 30 30 30 30 30 30 34 32 34 45 35 35 30 30 \
+    30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 \
+    30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 \
+    30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 \
+    30 30 30 30 30 30 30 30 30 30 30 30 34 31 33 30 \
+    33 30 33 31 30 30 30 30 30 30 30 30 30 30 30 30 \
+    30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 \
+    0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  SERCOMM_VERSION := 1001
+endef
+TARGET_DEVICES += sercomm_vd625

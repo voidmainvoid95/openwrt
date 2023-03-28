@@ -11,7 +11,8 @@ platform_check_image() {
 		netgear,dgnd3700-v2|\
 		sercomm,ad1018|\
 		sercomm,h500-s-lowi|\
-		sercomm,h500-s-vfes)
+		sercomm,h500-s-vfes|\
+		sercomm,vd625)
 			# NAND sysupgrade
 			return 0
 			;;
@@ -76,7 +77,8 @@ platform_do_upgrade() {
 			;;
 		sercomm,ad1018|\
 		sercomm,h500-s-lowi|\
-		sercomm,h500-s-vfes)
+		sercomm,h500-s-vfes|\
+		sercomm,vd625)
 			REQUIRE_IMAGE_METADATA=1
 			nand_do_upgrade "$1"
 			;;

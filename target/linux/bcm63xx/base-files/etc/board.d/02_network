@@ -147,7 +147,8 @@ sercomm,ad1018-nor)
 		"1:lan:3" "2:lan:2" "3:lan:1" "0:wan" "8t@eth0"
 	;;
 sercomm,h500-s-lowi|\
-sercomm,h500-s-vfes)
+sercomm,h500-s-vfes|\
+sercomm,vd625)
 	ucidef_add_switch "switch0" "4:lan" "3:wan" "8t@eth0"
 	;;
 sfr,neufbox-6-sercomm-r0)

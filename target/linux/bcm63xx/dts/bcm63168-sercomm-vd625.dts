@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
+/*
+ * Device Tree file for Sercomm VD625
+ *
+ * Copyright (C) 2023 Alex Pitrolo <alexpitrolo95@gmail.com>
+ */
+
+#include "bcm63268.dtsi"
+
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "Sercomm VD625";
+	compatible = "sercomm,vd625", "brcm,bcm63168", "brcm,bcm63268";
+	
+	aliases {
+		led-boot = &led_power_green;
+		led-failsafe = &led_power_red;
+		led-running = &led_power_green;
+		led-upgrade = &led_power_green;
+	};
+
+	chosen {
+		bootargs = "rootfstype=squashfs,ubifs noinitrd console=ttyS0,115200";
+		stdout-path = "serial0:115200n8";
+	};
+};
+
+&nflash {
+	status = "okay";
+
+	nandcs@0 {
+		compatible = "brcm,nandcs";
+		#size-cells = <1>;
+		#address-cells = <1>;
+		reg = <0>;
+		nand-ecc-step-size = <512>;
+		nand-ecc-strength = <4>;
+		nand-on-flash-bbt;
+		brcm,nand-oob-sector-size = <64>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "cferom";
+				reg = <0x0000000 0x0020000>;
+				read-only;
+			};
+
+			partition@20000 {
+				label = "part_map";
+				reg = <0x0020000 0x00a0000>;
+				read-only;
+			};
+
+			partition@c0000 {
+				label = "cferam1";
+				reg = <0x00c0000 0x0140000>;
+				read-only;
+			};
+
+			partition@200000 {
+				label = "cferam2";
+				reg = <0x0200000 0x0140000>;
+				read-only;
+			};
+
+            partition@340000 {
+                label = "serial";
+                reg = <0x0340000 0x00a0000>;
+            };
+
+            partition@3e0000 {
+                label = "protect";
+                reg = <0x03e0000 0x0140000>;
+            };
+
+            partition@520000 {
+                label = "kfs1";
+                reg = <0x0520000 0x4b00000>;
+            };
+
+            partition@5020000 {
+                label = "rootfs";
+                reg = <0x5020000 0x4b00000>;
+            };
+
+			partition@9b20000 {
+				label = "bootflag1";
+				reg = <0x9b20000 0x0140000>;
+			};
+
+			partition@9c60000 {
+				label = "bootflag2";
+				reg = <0x9c60000 0x0140000>;
+			};
+
+			partition@9da0000 {
+				label = "xml_cfg";
+				reg = <0x9da0000 0x0500000>;
+				read-only;
+			};
+
+			partition@a2a0000 {
+				label = "app_data";
+				reg = <0xa2a0000 0x5360000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&uart0 {
+	status = "okay";
+};

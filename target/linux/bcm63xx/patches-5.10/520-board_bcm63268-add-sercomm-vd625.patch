@@ -1,0 +1,55 @@
+--- a/arch/mips/bcm63xx/boards/board_bcm963xx.c
++++ b/arch/mips/bcm63xx/boards/board_bcm963xx.c
+@@ -2860,6 +2860,36 @@ static struct board_info __initdata board_H500s = {
+ 	},
+ };
+ 
++static struct board_info __initdata board_VD625 = {
++	.name = "963168MBV3",
++	.expected_cpu_id = 0x63268,
++
++	.has_ohci0 = 1,
++	.has_ehci0 = 1,
++	.num_usbh_ports = 2,
++
++	.has_enetsw = 1,
++	.enetsw = {
++		.used_ports = {
++			[3] = {
++				.used = 1,
++				.phy_id = 12,
++				.name = "WAN",
++			},
++			[4] = {
++				.used = 1,
++				.phy_id = 0,
++				.bypass_link = 1,
++				.force_speed = 1000,
++				.force_duplex_full = 1,
++				.mii_override = 1,
++				.timing_sel = 1,
++				.name = "RGMII",
++			},
++		},
++	},
++};
++
+ static struct board_info __initdata board_VG8050 = {
+ 	.name = "963169P-1861N5",
+ 	.expected_cpu_id = 0x63268,
+@@ -3073,6 +3103,7 @@ static const struct board_info __initconst *bcm963xx_boards[] = {
+ 	&board_963269bhr,
+ 	&board_BSKYB_63168,
+ 	&board_H500s,
++	&board_VD625,
+ 	&board_VG8050,
+ 	&board_VR3032u,
+ 	&board_vw6339gu,
+@@ -3201,6 +3232,7 @@ static struct of_device_id const bcm963xx_boards_dt[] = {
+ 	{ .compatible = "inteno,vg50", .data = &board_vw6339gu, },
+ 	{ .compatible = "sercomm,h500-s-lowi", .data = &board_H500s, },
+ 	{ .compatible = "sercomm,h500-s-vfes", .data = &board_H500s, },
++	{ .compatible = "sercomm,vd625", .data = &board_VD625, },
+ 	{ .compatible = "sky,sr102", .data = &board_BSKYB_63168, },
+ #endif /* CONFIG_BCM63XX_CPU_63268 */
+ #endif /* CONFIG_OF */
