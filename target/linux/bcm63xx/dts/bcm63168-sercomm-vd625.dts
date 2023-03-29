@@ -13,13 +13,6 @@
 	model = "Sercomm VD625";
 	compatible = "sercomm,vd625", "brcm,bcm63168", "brcm,bcm63268";
 	
-	aliases {
-		led-boot = &led_power_green;
-		led-failsafe = &led_power_red;
-		led-running = &led_power_green;
-		led-upgrade = &led_power_green;
-	};
-
 	chosen {
 		bootargs = "rootfstype=squashfs,ubifs noinitrd console=ttyS0,115200";
 		stdout-path = "serial0:115200n8";
