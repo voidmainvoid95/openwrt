@@ -1,0 +1,248 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
+/*
+ * Device Tree file for Sercomm VD625
+ *
+ * Copyright (C) 2023 Alex Pitrolo <alexpitrolo95@gmail.com>
+ */
+
+#include "bcm63268.dtsi"
+
+/ {
+	model = "Sercomm VD625";
+	compatible = "sercomm,vd625", "brcm,bcm63168", "brcm,bcm63268";
+	
+	chosen {
+		bootargs = "rootfstype=squashfs,ubifs noinitrd console=ttyS0,115200";
+		stdout-path = "serial0:115200n8";
+	};
+
+	keys {
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
+
+		wps {
+			label = "wps";
+			gpios = <&gpio 2 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+			debounce-interval = <60>;
+		};
+
+		reset {
+			label = "reset";
+			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+			debounce-interval = <60>;
+		};
+	};
+};
+
+&ehci {
+	status = "okay";
+};
+
+&ethernet {
+	status = "okay";
+
+	nvmem-cells = <&macaddr_cferom_6a0>;
+	nvmem-cell-names = "mac-address";
+};
+
+&mdio_int {
+	phy12: ethernet-phy@c {
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <12>;
+	};
+};
+
+&mdio_ext {
+	switch@1e {
+		compatible = "brcm,bcm53124";
+		reg = <30>;
+
+		dsa,member = <1 0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@1 {
+				reg = <1>;
+				label = "lan1";
+			};
+
+			port@2 {
+				reg = <2>;
+				label = "lan2";
+			};
+
+			port@3 {
+				reg = <3>;
+				label = "lan3";
+			};
+
+			port@4 {
+				reg = <4>;
+				label = "lan4";
+			};
+
+			port@5 {
+				reg = <5>;
+				label = "wifi";
+
+				phy-mode = "rgmii";
+
+				fixed-link {
+					speed = <1000>;
+					full-duplex;
+				};
+			};
+
+			port@8 {
+				reg = <8>;
+
+				phy-mode = "rgmii-txid";
+				ethernet = <&switch0port4>;
+
+				fixed-link {
+					speed = <1000>;
+					full-duplex;
+				};
+			};
+		};
+	};
+};
+
+&nflash {
+	status = "okay";
+
+	nandcs@0 {
+		compatible = "brcm,nandcs";
+		#size-cells = <1>;
+		#address-cells = <1>;
+		reg = <0>;
+		nand-ecc-step-size = <512>;
+		nand-ecc-strength = <4>;
+		nand-on-flash-bbt;
+		brcm,nand-oob-sector-size = <64>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cferom: partition@0 {
+				label = "cferom";
+				reg = <0x0000000 0x0020000>;
+				read-only;
+			};
+
+			partition@20000 {
+				label = "part_map";
+				reg = <0x0020000 0x00a0000>;
+				read-only;
+			};
+
+			partition@c0000 {
+				label = "cferam1";
+				reg = <0x00c0000 0x0140000>;
+				read-only;
+			};
+
+			partition@200000 {
+				label = "cferam2";
+				reg = <0x0200000 0x0140000>;
+				read-only;
+			};
+
+            partition@340000 {
+                label = "serial";
+                reg = <0x0340000 0x00a0000>;
+            };
+
+            partition@3e0000 {
+                label = "protect";
+                reg = <0x03e0000 0x0140000>;
+            };
+
+            partition@520000 {
+                label = "kfs1";
+                reg = <0x0520000 0x4b00000>;
+            };
+
+            partition@5020000 {
+                label = "rootfs";
+                reg = <0x5020000 0x4b00000>;
+            };
+
+			partition@9b20000 {
+				label = "bootflag1";
+				reg = <0x9b20000 0x0140000>;
+			};
+
+			partition@9c60000 {
+				label = "bootflag2";
+				reg = <0x9c60000 0x0140000>;
+			};
+
+			partition@9da0000 {
+				label = "xml_cfg";
+				reg = <0x9da0000 0x0500000>;
+				read-only;
+			};
+
+			partition@a2a0000 {
+				label = "app_data";
+				reg = <0xa2a0000 0x5360000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+
+&ohci {
+	status = "okay";
+};
+
+&switch0 {
+	dsa,member = <0 0>;
+
+	ports {
+		port@3 {
+			reg = <3>;
+			label = "wan";
+
+			phy-handle = <&phy12>;
+		};
+
+		switch0port4: port@4 {
+			reg = <4>;
+			label = "extsw";
+
+			phy-mode = "rgmii-txid";
+
+			fixed-link {
+				speed = <1000>;
+				full-duplex;
+			};
+		};
+	};
+};
+
+&usbh {
+	status = "okay";
+};
+
+&cferom {
+	compatible = "nvmem-cells";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	macaddr_cferom_6a0: macaddr@6a0 {
+		reg = <0x6a0 0x6>;
+	};
+};
