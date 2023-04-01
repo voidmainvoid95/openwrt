@@ -11,9 +11,11 @@
 	model = "Sercomm VD625";
 	compatible = "sercomm,vd625", "brcm,bcm63168", "brcm,bcm63268";
 	
-	chosen {
-		bootargs = "rootfstype=squashfs,ubifs noinitrd console=ttyS0,115200";
-		stdout-path = "serial0:115200n8";
+	aliases {
+		led-boot = &led_power_green;
+		led-failsafe = &led_power_green;
+		led-running = &led_power_green;
+		led-upgrade = &led_power_green;
 	};
 
 	keys {
@@ -67,34 +69,22 @@
 
 			port@1 {
 				reg = <1>;
-				label = "lan1";
+				label = "lan4";
 			};
 
 			port@2 {
 				reg = <2>;
-				label = "lan2";
+				label = "lan3";
 			};
 
 			port@3 {
 				reg = <3>;
-				label = "lan3";
+				label = "lan2";
 			};
 
 			port@4 {
 				reg = <4>;
-				label = "lan4";
-			};
-
-			port@5 {
-				reg = <5>;
-				label = "wifi";
-
-				phy-mode = "rgmii";
-
-				fixed-link {
-					speed = <1000>;
-					full-duplex;
-				};
+				label = "lan1";
 			};
 
 			port@8 {
@@ -109,6 +99,61 @@
 				};
 			};
 		};
+	};
+};
+
+&leds {
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_leds &pinctrl_serial_led>;
+
+	brcm,serial-leds;
+	brcm,serial-shift-inv;
+	brcm,serial-dat-low;
+
+	led@0 {
+		reg = <0>;
+		active-low;
+		label = "red:internet";
+	};
+
+	led@1 {
+		reg = <1>;
+		active-low;
+		label = "green:internet";
+	};
+
+	led_power_green: led@8 {
+		reg = <8>;
+		active-low;
+		label = "green:power";
+		default-state = "on";
+	};
+
+	led@10 {
+		reg = <10>;
+		active-low;
+		label = "green:adsl";
+	};
+
+	led@11 {
+		reg = <11>;
+		active-low;
+		label = "red:adsl";
+	};
+
+	led@12 {
+		reg = <12>;
+		active-low;
+		label = "green:phone";
+	};
+
+
+	led@14 {
+		reg = <14>;
+		active-low;
+		label = "green:wifi";
 	};
 };
 
@@ -164,16 +209,6 @@
                 reg = <0x03e0000 0x0140000>;
             };
 
-            partition@520000 {
-                label = "kfs1";
-                reg = <0x0520000 0x4b00000>;
-            };
-
-            partition@5020000 {
-                label = "rootfs";
-                reg = <0x5020000 0x4b00000>;
-            };
-
 			partition@9b20000 {
 				label = "bootflag1";
 				reg = <0x9b20000 0x0140000>;
@@ -183,6 +218,12 @@
 				label = "bootflag2";
 				reg = <0x9c60000 0x0140000>;
 			};
+
+			partition@520000 {
+				compatible = "sercomm,wfi";
+                label = "wfi";
+                reg = <0x0520000 0x9600000>;
+            };
 
 			partition@9da0000 {
 				label = "xml_cfg";
@@ -236,6 +277,14 @@
 &usbh {
 	status = "okay";
 };
+
+&pinctrl {
+	pinctrl_leds: leds {
+		function = "led";
+		pins = "gpio0", "gpio1";
+	};
+};
+
 
 &cferom {
 	compatible = "nvmem-cells";

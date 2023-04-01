@@ -157,16 +157,15 @@ TARGET_DEVICES += sercomm_h500-s-vfes
 
 define Device/sercomm_vd625
   $(Device/sercomm-nand)
-  IMAGES := factory.img sysupgrade.bin
+  IMAGES := factory.img sysupgrade.bin flashburn.bin
   IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | cfe-sercomm-part | gzip | cfe-sercomm-load
+  IMAGE/flashburn.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi
   DEVICE_VENDOR := Sercomm
   DEVICE_MODEL := VD625
   DEVICE_LOADADDR := $(KERNEL_LOADADDR)
   KERNEL := kernel-bin | append-dtb | lzma | cfe-jffs2-kernel
   CHIP_ID := 63268
   SOC := bcm63168
-  CFE_RAM_FILE := sercomm,vd625/cferam.000
-  CFE_RAM_JFFS2_NAME := cferam.000  
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   SUBPAGESIZE := 512
